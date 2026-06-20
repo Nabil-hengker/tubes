@@ -30,7 +30,8 @@ class AuthController extends Controller
         return redirect()->route('admin.dashboard'); // Masuk ke /admin
     }
 
-    return redirect()->route('student.dashboard'); // Masuk ke /dashboard
+    return redirect()
+    ->route('student.dashboard', ['tab' => 'home']);
     }
 
     // Jika gagal, kembalikan ke form dengan pesan error

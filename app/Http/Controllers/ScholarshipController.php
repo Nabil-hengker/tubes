@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 
+
 class ScholarshipController extends Controller
 {
     public function index(Request $request): View|RedirectResponse
@@ -142,13 +143,13 @@ class ScholarshipController extends Controller
         return back()->with('success', $message);
     }
 
-    public function updateProfile(Request $request): RedirectResponse
-    {
-    abort_if(Auth::user()->role === 'admin', 403);
+   public function updateProfile(Request $request)
+{
+    $user = $request->user();
 
     $validated = $request->validate([
         'name' => 'required|string|max:255',
-        'email' => 'required|email|max:255|unique:users,email,' . Auth::id(),
+        'email' => 'required|email|max:255|unique:users,email,' . $user->id,
         'phone' => 'nullable|string|max:30',
         'nim' => 'nullable|string|max:50',
         'major' => 'nullable|string|max:100',
@@ -156,12 +157,15 @@ class ScholarshipController extends Controller
         'bio' => 'nullable|string|max:1000',
     ]);
 
-    $request->user()->update($validated);
+    $user->update($validated);
 
-    return redirect()->route('student.dashboard', ['tab' => 'profile'])
+    // 🔥 ini yang bikin navbar ikut update
+    Auth::login($user->fresh());
+
+    return redirect()
+        ->route('student.dashboard', ['tab' => 'home'])
         ->with('success', 'Profil berhasil diperbarui.');
     }
-
     public function adminIndex(Request $request): View
     {
         abort_if(Auth::user()->role !== 'admin', 403);
@@ -259,6 +263,12 @@ class ScholarshipController extends Controller
         foreach ($items as $item) {
             Scholarship::create($item);
         }
+    }
+    public function profile()
+    {
+    return view('profile.show', [
+        'user' => Auth::user()
+    ]);
     }
 
 }

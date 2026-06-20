@@ -84,7 +84,7 @@
             {{ Auth::user()->name }}
         </div>
         <div class="text-xs text-slate-500">
-            {{ Auth::user()->role === 'admin' ? 'Administrator' : 'Sistem Informasi' }}
+            {{ Auth::user()->role === 'admin' ? 'Administrator' : Auth::user()->major }}
         </div>
     </div>
     <div class="w-11 h-11 rounded-full bg-slate-300 overflow-hidden flex items-center justify-center text-slate-700 font-bold group-hover:ring-2 group-hover:ring-blue-500 transition">
@@ -95,12 +95,11 @@
         </header>
 
         <div class="p-4 md:p-8">
-            @if (session('success'))
-                <div class="mb-6 rounded-2xl border border-emerald-200 bg-emerald-50 px-5 py-4 text-emerald-700 text-sm font-medium">
-                    {{ session('success') }}
-                </div>
-            @endif
-
+           @if(session('success'))
+    <div class="bg-green-100 text-green-700 p-2 rounded">
+        {{ session('success') }}
+    </div>
+@endif
             @if ($errors->any())
                 <div class="mb-6 rounded-2xl border border-rose-200 bg-rose-50 px-5 py-4 text-rose-700 text-sm">
                     {{ $errors->first() }}
@@ -156,7 +155,7 @@
                                 </div>
 
                                 <div class="absolute bottom-6 left-6 flex items-center gap-3">
-                                    <a href="{{ route('student.apply', $scholarship) }}" class="inline-flex items-center rounded-xl bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white hover:bg-black">
+                                    <a href="{{ $scholarship->official_url }}" target="_blank" class="inline-flex items-center rounded-xl bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white hover:bg-black">
                                         Apply
                                     </a>
                                 </div>
@@ -177,25 +176,7 @@
                         @endforelse
                     </div>
                 </section>
-            @elseif ($tab === 'profile')
-    <section class="bg-white rounded-3xl border border-slate-200 p-6 md:p-8 max-w-4xl">
-        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-6 mb-8">
-            <div class="flex items-center gap-4">
-                <div class="w-16 h-16 rounded-full bg-slate-200 flex items-center justify-center text-2xl font-bold text-slate-700">
-                    {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
-                </div>
-                <div>
-                    <h2 class="text-2xl font-bold">{{ Auth::user()->name }}</h2>
-                    <p class="text-slate-500">Mahasiswa</p>
-                </div>
-            </div>
-
-            <a href="{{ route('student.dashboard', ['tab' => 'home']) }}"
-               class="inline-flex items-center justify-center rounded-2xl border border-slate-300 px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50">
-                Kembali ke Dashboard
-            </a>
-        </div>
-
+            @elseif($tab === 'profile')
         <form method="POST" action="{{ route('student.profile.update') }}" class="space-y-6">
             @csrf
             @method('PUT')

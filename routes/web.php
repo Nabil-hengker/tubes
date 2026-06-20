@@ -28,7 +28,10 @@ Route::middleware('guest')->group(function () {
 
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [ScholarshipController::class, 'index'])->name('student.dashboard');
-    Route::put('/dashboard/profile', [ScholarshipController::class, 'updateProfile'])->name('student.profile.update');
+    Route::put('/dashboard/home', [ScholarshipController::class, 'updateProfile'])->name('student.profile.update');
+    Route::get('/dashboard/home', function () {
+    return redirect()->route('student.dashboard', ['tab' => 'home']);
+    });
     Route::get('/scholarships/{scholarship}/apply', [ScholarshipController::class, 'showApplyForm'])->name('student.apply');
     Route::post('/scholarships/{scholarship}/apply', [ScholarshipController::class, 'storeApplication'])->name('student.store');
     Route::post('/bookmarks/{scholarship}/toggle', [ScholarshipController::class, 'toggleBookmark'])->name('student.bookmark.toggle');
@@ -38,3 +41,4 @@ Route::middleware('auth')->group(function () {
 
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 });
+
